@@ -1,0 +1,5 @@
+private-data
+.env*
+node_modules
+public
+*.test.js
