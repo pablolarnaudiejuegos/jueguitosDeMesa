@@ -46,7 +46,7 @@ export async function handler(req,res){
   return send(404,{error:'No encontrado.'});
  }
  const name=url.pathname==='/'?'index.html':decodeURIComponent(url.pathname).slice(1),relative=path.normalize(name);
- const allowed=new Set(['burger.html','burger.js','burger.css','burger-data.js','burger-engine.js','naturalis.html','naturalis.js','naturalis.css','naturalis-data.js','naturalis-engine.js','index.html','carcassonne.html','bonsai.html','profile.html','app.js','bonsai.js','engine.js','bonsai-engine.js','accounts.js','bots.js','style.css','bonsai.css','accounts.css']);
+ const allowed=new Set(['players.js','burger.html','burger.js','burger.css','burger-data.js','burger-engine.js','naturalis.html','naturalis.js','naturalis.css','naturalis-data.js','naturalis-engine.js','index.html','carcassonne.html','bonsai.html','profile.html','app.js','bonsai.js','engine.js','bonsai-engine.js','accounts.js','bots.js','style.css','bonsai.css','accounts.css']);
  if(!allowed.has(relative)&&!(relative.startsWith('assets'+path.sep)&&!relative.split(path.sep).includes('..')&&/\.(jpg|png|svg)$/.test(relative))){res.writeHead(404);return res.end('No encontrado');}
  const types={'.jpg':'image/jpeg','.png':'image/png','.svg':'image/svg+xml','.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8'};
  res.writeHead(200,{'Content-Type':types[path.extname(relative)],'Cache-Control':'no-cache'});res.end(readFileSync(path.join(root,relative)));

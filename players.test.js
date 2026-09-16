@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {configureSeats,controller,isAI} from './players.js';
+import {createNaturalis,actNaturalis} from './naturalis-engine.js';
+import {createBonsai,act,validateSave} from './bonsai-engine.js';
+import {createGame} from './engine.js';
+import {naturalisMove,bonsaiMove,carcassonneMove} from './bots.js';
+const form=values=>({querySelectorAll:()=>values.map(value=>({value}))});
+test('asientos mixtos, IA en cualquier posición y compatibilidad con guardados anteriores',()=>{const s={players:[{name:'A'},{name:'B'},{name:'C'}]};configureSeats(s,form(['hard','human','easy']));assert.equal(isAI(s,0),true);assert.equal(isAI(s,1),false);assert.equal(controller(JSON.parse(JSON.stringify(s)),2).level,'easy');assert.equal(isAI({machine:true,players:[{},{}]},1),true);assert.throws(()=>configureSeats(s,form(['invalid'])));});
+test('Naturalis: cada dificultad termina partidas de 2, 3 y 4 y preserva los asientos al recargar',()=>{for(const level of ['easy','medium','hard'])for(const n of [2,3,4]){let s=createNaturalis(Array.from({length:n},(_,i)=>'P'+i));configureSeats(s,form(Array(n).fill(level)));let steps=0;while(s.phase!=='over'&&steps++<600){s=actNaturalis(s,naturalisMove(s,level));s=JSON.parse(JSON.stringify(s));}assert.equal(s.phase,'over');assert.ok(s.players.every((_,i)=>controller(s,i).level===level));assert.ok(s.results.every(r=>Number.isFinite(r.total)));}});
+test('Bonsái y Carcassonne: niveles y asientos múltiples completan partidas legales',()=>{for(const level of ['easy','medium','hard']){let b=createBonsai({names:['A','B','C'],seed:level});configureSeats(b,form(['human',level,level]));let k=0;while(b.phase!=='over'&&k++<2000)b=act(b,bonsaiMove(b,level));assert.equal(b.phase,'over');validateSave(b);assert.equal(isAI(b,0),false);assert.equal(isAI(b,2),true);const c=createGame(['A','B','C','D','E'],{withRiver:true});configureSeats(c,form(['human',level,'human',level,level]));k=0;while(c.phase!=='over'&&k++<500)carcassonneMove(c,level);assert.equal(c.phase,'over');assert.equal(isAI(c,4),true);}});
+test('Naturalis difícil no consulta el frente de los mazos ocultos ni objetivos ajenos',()=>{let s=createNaturalis(['A','B']);while(s.setup)s=actNaturalis(s,naturalisMove(s,'hard'));s=actNaturalis(s,{type:'ready'});const other=(s.turn+1)%2,t=structuredClone(s);t.resource.reverse();t.gold.reverse();t.players[other].secret=999999;t.players[other].hand=[];assert.deepEqual(naturalisMove(s,'hard'),naturalisMove(t,'hard'));});
