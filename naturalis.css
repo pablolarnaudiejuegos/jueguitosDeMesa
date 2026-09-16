@@ -15,3 +15,8 @@
 @media(min-width:1101px){.with-track{max-width:1880px;padding-left:390px}.with-track>.score-track{width:340px;left:24px;padding:16px}.score-track h2{font-size:27px}.track-legend>div{font-size:13px}.score-track>small{font-size:11px}}
 @media(max-width:1100px){.with-track>.score-track svg{width:190px;max-width:48%}.with-track>.score-track h2{width:100%;text-align:left}.with-track>.score-track{padding:16px}}
 
+
+/* Compact cards while preserving board scale and the large score track. */
+.hand{gap:10px;flex-wrap:nowrap}.hand-card{flex:1 1 0;max-width:190px}.hand .flip-card{padding:7px 4px;font-size:12px}.hand-card>small{font-size:10px}.archive-card{flex:0 1 125px;max-width:125px}.market-row{gap:8px}.objective{width:205px;min-width:0;max-width:205px;padding:12px}.objective svg{height:auto;max-height:105px}.personal-goal .objectives{min-height:0}.objectives{gap:12px}.starter{max-width:205px}@media(max-width:650px){.hand-card{flex:1 1 95px;max-width:165px}.archive-card{flex:1 1 0;max-width:125px}.objective{width:180px;max-width:100%}.hand .flip-card{font-size:11px}.objective-zones{gap:20px}}
+
+.market-row>button{max-width:125px;flex:1 1 0}
