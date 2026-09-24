@@ -4,6 +4,6 @@
 
 Los adaptadores en `bots.js` consultan las acciones legales del motor. Fácil elige al azar entre opciones legales; medio prioriza recompensa inmediata; difícil agrega valoración de recursos, posiciones y objetivos. Son heurísticas locales, sin servicios externos ni garantía de victoria. No se modifican reglas, recursos ni puntuaciones por dificultad.
 
-Cada nuevo juego debe aportar su adaptador, preservar controller al guardar, cancelar el temporizador al salir de la partida, ocultar información privada de la IA y probar partidas completas con distintos tamaños y niveles. La configuración común no crea por sí sola una estrategia para un juego nuevo. Burger Up y Survive todavía necesitan completar sus motores e interfaz de partida antes de activar rivales.
+Cada nuevo juego debe aportar su adaptador, preservar controller al guardar, cancelar el temporizador al salir de la partida, ocultar información privada de la IA y probar partidas completas con distintos tamaños y niveles. La configuración común no crea por sí sola una estrategia para un juego nuevo. Burger Up necesita completar el catálogo comercial antes de activar partidas. Survive usa `survive-bot.js`, con simulaciones de 2–5 participantes en las tres dificultades; las reacciones privadas pueden pausar el turno automático para que responda una persona.
 
 La cuenta se asocia al primer asiento humano. Al enviar resultados, ese participante figura primero para mantener la compatibilidad con el historial existente; una mesa solo de IA no registra un récord personal.
