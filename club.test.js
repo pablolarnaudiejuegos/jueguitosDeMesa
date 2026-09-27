@@ -1,0 +1,9 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {CLUB} from './club-data.js';
+import {chooseClub} from './club-bot.js';
+import {createGame,act,validateSave,validateCatalog,requirements} from './burger-engine.js';
+test('Burger Club: mazo propio completo y pedidos posibles',()=>{assert(validateCatalog(CLUB));assert.equal(CLUB.orders.length,21);const stack=CLUB.cards.flatMap(c=>c.sides.map((_,side)=>({id:c.id,side})));for(const o of CLUB.orders.filter(o=>o.id!=='veggie'&&o.id!=='balanced'))assert(requirements(stack,o,CLUB).every(x=>x.ok),o.name);});
+test('partidas 2–4, tres niveles de IA: acciones legales, guardado, conservación y final',()=>{for(const n of [2,3,4])for(const level of ['easy','medium','hard'])for(let seed=1;seed<=3;seed++){let s=createGame(Array.from({length:n},(_,i)=>`Chef ${i}`),{catalog:CLUB,seed});let steps=0;while(s.phase!=='over'&&steps++<1500){s=act(s,chooseClub(s,level,()=>.31),CLUB);assert(validateSave(s,CLUB));s=JSON.parse(JSON.stringify(s));}assert.equal(s.phase,'over');assert(s.players.every(p=>p.turns===s.players[0].turns));assert(s.players.every(p=>p.turns<=20));assert(s.scores.every(r=>Number.isInteger(r.total)&&r.total>=0));}});
+test('sin ventas finaliza exactamente a los 20 turnos por persona',()=>{let s=createGame(['A','B'],{catalog:CLUB,seed:1});for(let t=0;t<40;t++){for(const type of ['ready','advance','advance','advance','cleanup'])s=act(s,{type},CLUB);}assert.equal(s.phase,'over');assert.deepEqual(s.players.map(p=>p.turns),[20,20]);});
+test('la IA no consulta cartas privadas del rival ni orden de los mazos',()=>{let s=createGame(['A','B'],{catalog:CLUB,seed:7});s=act(s,{type:'ready'},CLUB);const expected=chooseClub(s,'hard');const hidden=structuredClone(s);hidden.deck.reverse();hidden.orderDeck.reverse();hidden.players[1].hand=[];assert.deepEqual(chooseClub(hidden,'hard'),expected);});

@@ -39,7 +39,7 @@ export async function handler(req,res){
   if(!user)return send(401,{error:'IniciÃ¡ sesiÃ³n para continuar.'});
   if(req.method==='GET'&&url.pathname==='/api/history')return send(200,{matches:(await store.list('matches',{owner:user.id})).sort((a,b)=>b.date.localeCompare(a.date))});
   if(req.method==='POST'&&url.pathname==='/api/matches'){
-   if(!/^[a-zA-Z0-9-]{8,100}$/.test(b.id||'')||!['bonsai','carcassonne','naturalis','survive'].includes(b.game)||!['solo','local','machine'].includes(b.mode)||!Array.isArray(b.players)||b.players.length<1||b.players.length>5||b.players.some(p=>typeof p.name!=='string'||p.name.length>24||!Number.isSafeInteger(p.score)||p.score<0||p.score>10000))return send(400,{error:'Resultado invÃ¡lido.'});
+   if(!/^[a-zA-Z0-9-]{8,100}$/.test(b.id||'')||!['bonsai','carcassonne','naturalis','survive','burger-club'].includes(b.game)||!['solo','local','machine'].includes(b.mode)||!Array.isArray(b.players)||b.players.length<1||b.players.length>5||b.players.some(p=>typeof p.name!=='string'||p.name.length>24||!Number.isSafeInteger(p.score)||p.score<0||p.score>10000))return send(400,{error:'Resultado invÃ¡lido.'});
    const existing=await store.find('matches',{id:b.id});if(existing)return existing.owner===user.id?send(200,{ok:true}):send(409,{error:'Partida ya registrada.'});
    try{await store.insert('matches',{id:b.id,owner:user.id,game:b.game,mode:b.mode,date:new Date().toISOString(),players:b.players.map((p,i)=>({name:i===0?user.name:p.name,score:p.score})),verified:false});}catch(e){if(e.code!==11000)throw e;const saved=await store.find('matches',{id:b.id});return send(saved.owner===user.id?200:409,saved.owner===user.id?{ok:true}:{error:'Partida ya registrada.'});}return send(201,{ok:true});
   }
