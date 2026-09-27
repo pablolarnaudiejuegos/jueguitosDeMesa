@@ -32,7 +32,7 @@ export function requirements(stack,o,c=CATALOG){
  case'without':text=`Sin ${q.value}`;ok=tag(q.value).length===0;break;
  case'distinct':text=`${q.count} diferentes: ${q.value}`;ok=new Set(tag(q.value).map(x=>x.name)).size>=q.count;break;
  case'top':text=`${q.value} arriba de todo`;ok=items.at(-1)?.name===q.value;break;
- case'equal':{text=`Igual cantidad: ${q.values.join(', ')}`;const counts=q.values.map(t=>tag(t).length);ok=counts.every(n=>n===counts[0]);break;}
+ case'equal':{text=`Igual cantidad: ${q.values.join(', ')}`;const counts=q.values.map(t=>tag(t).length);ok=counts[0]>0&&counts.every(n=>n===counts[0]);break;}
  default:throw Error('Requisito no implementado.');}r.push({text,ok});}return r;
 }
 export function finalScores(s){const most=Math.max(...s.players.map(p=>p.completed.length)),unique=s.players.filter(p=>p.completed.length===most).length===1;return s.players.map(p=>{const spatula=4-2*p.spatulaUses,bonus=unique&&p.completed.length===most?5:0;return {coins:p.coins,spatula,bonus,total:p.coins+spatula+bonus};});}
